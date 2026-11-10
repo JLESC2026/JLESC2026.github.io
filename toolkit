@@ -87,8 +87,11 @@ try {
     Expand-Archive -LiteralPath $zip -DestinationPath $extract -Force
 
     $src = Get-ChildItem -LiteralPath $extract -Directory | Select-Object -First 1
-    $toolkitScript = Join-Path $src.FullName 'Launcher\Toolkit.ps1'
-    if (-not (Test-Path -LiteralPath $toolkitScript)) { throw 'Toolkit launcher not found in download package.' }
+    # The toolkit may sit at the repo root or inside a subfolder (e.g. 'Technical Support'), so search for it.
+    $found = Get-ChildItem -LiteralPath $src.FullName -Recurse -File -Filter 'Toolkit.ps1' -ErrorAction SilentlyContinue |
+        Where-Object { (Split-Path $_.DirectoryName -Leaf) -eq 'Launcher' } | Select-Object -First 1
+    if (-not $found) { throw 'Toolkit launcher not found in download package.' }
+    $toolkitScript = $found.FullName
 
     Get-ChildItem -LiteralPath $src.FullName -Recurse -File -ErrorAction SilentlyContinue | Unblock-File -ErrorAction SilentlyContinue
 
