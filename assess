@@ -1,1 +1,57 @@
-    
+# PC Assessment - short link launcher
+# Copy this file to the JLESC2026.github.io repo so:
+#   irm jlesc2026.github.io/assess | iex
+
+$ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
+try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch { }
+
+if ($env:OS -ne 'Windows_NT') {
+    Write-Host '[ASSESS] This assessment runs on Windows only.' -ForegroundColor Red
+    return
+}
+
+$scriptUrl = 'https://raw.githubusercontent.com/JLESC2026/IT-Tech-Support-Tool-Kit/main/Assess/Assess.ps1'
+$tempRoot = Join-Path $env:TEMP ('assess_' + [guid]::NewGuid().ToString('N'))
+
+try {
+    New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
+    $assessmentScript = Join-Path $tempRoot 'Assess.ps1'
+
+    Write-Host '[ASSESS] Downloading PC assessment...' -ForegroundColor Cyan
+    try {
+        Invoke-WebRequest -Uri $scriptUrl -OutFile $assessmentScript -UseBasicParsing
+    } catch {
+        throw "Assessment download failed: $($_.Exception.Message)"
+    }
+    if (-not (Test-Path -LiteralPath $assessmentScript) -or (Get-Item -LiteralPath $assessmentScript).Length -eq 0) {
+        throw 'The downloaded assessment script is empty.'
+    }
+
+    $desktop = [Environment]::GetFolderPath('Desktop')
+    if (-not $desktop) { $desktop = $env:TEMP }
+    $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$assessmentScript`" -OutDir `"$desktop`" -Pause"
+    $currentIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $isAdmin = (New-Object Security.Principal.WindowsPrincipal($currentIdentity)).IsInRole(
+        [Security.Principal.WindowsBuiltInRole]::Administrator
+    )
+
+    Write-Host '[ASSESS] Starting read-only assessment...' -ForegroundColor Cyan
+    $startParams = @{
+        FilePath     = (Get-Process -Id $PID).Path
+        ArgumentList = $arguments
+        Wait         = $true
+        PassThru     = $true
+    }
+    if (-not $isAdmin) { $startParams.Verb = 'RunAs' }
+    $process = Start-Process @startParams
+    if ($process.ExitCode -ne 0) {
+        throw "Assessment process exited with code $($process.ExitCode)."
+    }
+} catch {
+    Write-Host "[ASSESS] Error: $($_.Exception.Message)" -ForegroundColor Red
+} finally {
+    if (Test-Path -LiteralPath $tempRoot) {
+        Remove-Item -LiteralPath $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
