@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IT Tech Support Tool Kit</title>
+<meta name="description" content="A portable Windows troubleshooting toolkit for IT technicians: a diagnose-and-fix dashboard and a read-only PC assessment, run from PowerShell or a flash drive.">
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #111827; --muted: #5b6472; --line: #dde1e7;
+    --accent: #1d4ed8; --code-bg: #0f172a; --code-text: #e2e8f0; --warn-bg: #fff7e0; --warn-line: #e8c766;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117; --card: #161b22; --text: #e6edf3; --muted: #9aa5b1; --line: #2b323c;
+      --accent: #6ea0ff; --code-bg: #05080d; --code-text: #e2e8f0; --warn-bg: #2a2410; --warn-line: #6b5a1c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px 64px; }
+  header { padding: 40px 0 8px; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 8px; }
+  h2 { font-size: 1.25rem; margin: 36px 0 10px; }
+  h3 { font-size: 1rem; margin: 0 0 4px; }
+  p { margin: 0 0 12px; }
+  a { color: var(--accent); }
+  .lede { color: var(--muted); font-size: 1.05rem; max-width: 62ch; }
+  .pill { display: inline-block; padding: 2px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: .85rem; margin-top: 4px; }
+  .pill[hidden] { display: none; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 0 0 14px; }
+  .card p:last-child { margin-bottom: 0; }
+  .cmd { position: relative; margin: 8px 0 0; }
+  pre { margin: 0; padding: 12px 84px 12px 12px; background: var(--code-bg); color: var(--code-text); border-radius: 8px; overflow-x: auto; font: 13px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; white-space: pre; }
+  button.copy { position: absolute; top: 8px; right: 8px; padding: 4px 10px; border: 1px solid #475569; border-radius: 6px; background: #1e293b; color: #e2e8f0; font: inherit; font-size: .8rem; cursor: pointer; }
+  button.copy:hover { background: #334155; }
+  button.copy:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  ul { margin: 0 0 12px; padding-left: 20px; }
+  li { margin: 4px 0; }
+  .note { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 10px; padding: 12px 16px; margin: 0 0 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  footer { margin-top: 40px; color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>IT Tech Support Tool Kit</h1>
+    <p class="lede">A portable Windows troubleshooting toolkit for IT technicians: a diagnose-and-fix dashboard with a guided Troubleshooting Wizard, and a separate read-only PC assessment that produces one HTML report. It runs inside Windows on a PC that already starts; it is not a bootable or recovery tool.</p>
+    <span class="pill" id="ver" hidden></span>
+  </header>
+
+  <h2>Run it</h2>
+  <p>Open <strong>PowerShell</strong> and paste one of these commands. They set TLS 1.2 and handle a download that arrives as bytes, which the shorter <code>irm &hellip; | iex</code> form does not always do.</p>
+
+  <div class="card">
+    <h3>Support dashboard (online, no copy kept)</h3>
+    <p>Downloads a verified release, runs it from a temporary protected folder and deletes the folder when you close the toolkit. Asks for administrator rights. No portable apps are downloaded.</p>
+    <div class="cmd"><pre id="c1">[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $r=(iwr -UseBasicParsing https://jlesc2026.github.io/toolkit).Content; if($r -is [byte[]]){$r=[Text.Encoding]::UTF8.GetString($r)}; iex $r.TrimStart([char]0xFEFF)</pre><button class="copy" type="button" data-target="c1">Copy</button></div>
+  </div>
+
+  <div class="card">
+    <h3>PC assessment (read-only report)</h3>
+    <p>Checks hardware, storage health, security, drivers and recent crashes, then saves one HTML report to the Desktop. The report is kept and contains the computer name, user name, serial number and MAC addresses, so share it only with people who support that PC.</p>
+    <div class="cmd"><pre id="c2">[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $r=(iwr -UseBasicParsing https://jlesc2026.github.io/assess).Content; if($r -is [byte[]]){$r=[Text.Encoding]::UTF8.GetString($r)}; iex $r.TrimStart([char]0xFEFF)</pre><button class="copy" type="button" data-target="c2">Copy</button></div>
+  </div>
+
+  <div class="card">
+    <h3>Flash-drive copy (with your portable apps)</h3>
+    <p>Builds or updates <code>IT-Toolkit\</code> on a USB drive, then you start it with <code>START.bat</code>. Updating keeps your <code>PortableApps</code>, <code>Logs</code>, <code>Reports</code> and settings. No administrator rights needed to build it.</p>
+    <div class="cmd"><pre id="c3">[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $r=(iwr -UseBasicParsing https://jlesc2026.github.io/install).Content; if($r -is [byte[]]){$r=[Text.Encoding]::UTF8.GetString($r)}; iex $r.TrimStart([char]0xFEFF)</pre><button class="copy" type="button" data-target="c3">Copy</button></div>
+  </div>
+
+  <h2>What the online mode does and does not do</h2>
+  <div class="note">
+    <p><strong>Minimal footprint, not zero trace.</strong> It runs from a temporary protected folder and deletes it on exit, then checks that the folder is gone. Windows and security-software logs are not affected.</p>
+  </div>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>It does</th><th>It does not</th></tr></thead>
+    <tbody><tr>
+      <td><ul>
+        <li>Download a published release and check its SHA-256 hash before running anything</li>
+        <li>Use a new, randomly named folder under <code>C:\ProgramData</code> that only administrators and SYSTEM can open, and refuse links</li>
+        <li>Switch the toolkit's disk logging off for the session</li>
+        <li>Verify the deletion and warn you if anything remains</li>
+      </ul></td>
+      <td><ul>
+        <li>Remove the command you typed from your shell history</li>
+        <li>Touch Windows event logs, PowerShell or process-creation logging, antivirus or EDR history, Prefetch or the DNS cache</li>
+        <li>Keep reports made during the session: they are deleted with the folder, so copy them out first</li>
+        <li>Delete the assessment's HTML report, which is saved to the Desktop</li>
+      </ul></td>
+    </tr></tbody>
+  </table>
+  </div>
+
+  <h2>Verified releases</h2>
+  <p>The launchers never run whatever is on the <code>main</code> branch. Each reads <a href="manifest.json">manifest.json</a> from this site, downloads the matching release file from GitHub Releases and compares its SHA-256 hash. If the hash does not match, or the manifest points anywhere other than this project's releases, nothing runs. A new version only reaches these links when a release is published.</p>
+
+  <h2>Before you use it</h2>
+  <ul>
+    <li><strong>Use it only on computers you are authorized to support.</strong> The tools can change services, networking, system files and devices. There is no warranty; try it on a spare PC or virtual machine first.</li>
+    <li><strong>Security software may react.</strong> The launchers start PowerShell with <code>-ExecutionPolicy Bypass</code> and the online mode runs a downloaded script as administrator.</li>
+    <li>Requires Windows 10 or 11 with the built-in Windows PowerShell 5.1. Most tools work offline once the toolkit is on the PC. Some output expects an English version of Windows.</li>
+  </ul>
+
+  <h2>Links</h2>
+  <ul>
+    <li><a href="https://github.com/JLESC2026/IT-Tech-Support-Tool-Kit">Source code and full README</a></li>
+    <li><a href="https://github.com/JLESC2026/IT-Tech-Support-Tool-Kit/releases">Releases</a></li>
+    <li><a href="https://github.com/JLESC2026/IT-Tech-Support-Tool-Kit/blob/main/SECURITY.md">Reporting a security problem</a></li>
+  </ul>
+
+  <footer>License: not yet specified. Contact the repository owner before redistributing the code.</footer>
+</div>
+
+<script>
+(function () {
+  // Copy buttons
+  var buttons = document.querySelectorAll('button.copy');
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function (ev) {
+      var btn = ev.currentTarget;
+      var text = document.getElementById(btn.getAttribute('data-target')).textContent;
+      var done = function (ok) {
+        btn.textContent = ok ? 'Copied' : 'Press Ctrl+C';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1800);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+      } else {
+        var range = document.createRange();
+        range.selectNodeContents(document.getElementById(btn.getAttribute('data-target')));
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) {}
+        done(ok);
+      }
+    });
+  }
+  // Latest release, if version.json exists (it is written by the Release workflow)
+  try {
+    fetch('version.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (v) {
+      if (!v || !v.version) return;
+      var el = document.getElementById('ver');
+      var d = v.released ? ' \u00b7 ' + String(v.released).slice(0, 10) : '';
+      el.textContent = 'Latest release v' + v.version + d;
+      el.hidden = false;
+    }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
