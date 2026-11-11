@@ -24,3 +24,4 @@ Pages should be set to deploy from the `main` branch, `/ (root)` folder (Setting
 ## Rolling back
 
 Run the Release workflow manually in the main repository with an older tag. It republishes that release's manifest and launchers.
+
