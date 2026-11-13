@@ -1,14 +1,14 @@
 {
   "schema": 1,
-  "version": "1.0.2",
-  "tag": "v1.0.2",
-  "released": "2026-11-13T06:45:09Z",
+  "version": "1.0.3",
+  "tag": "v1.0.3",
+  "released": "2026-11-13T07:19:25Z",
   "toolkit": {
-    "url": "https://github.com/JLESC2026/IT-Tech-Support-Tool-Kit/releases/download/v1.0.2/toolkit-1.0.2.zip",
-    "sha256": "bd05dc1bab150f90945bda6f7648117bf92ef6af22422f46545c619509fc607d"
+    "url": "https://github.com/JLESC2026/IT-Tech-Support-Tool-Kit/releases/download/v1.0.3/toolkit-1.0.3.zip",
+    "sha256": "4ea30f92fb55ddaf4bf7a7fd6c9bf1d7a824ce4281b39f5a47baa0c883568060"
   },
   "assess": {
-    "url": "https://github.com/JLESC2026/IT-Tech-Support-Tool-Kit/releases/download/v1.0.2/Assess-1.0.2.ps1",
+    "url": "https://github.com/JLESC2026/IT-Tech-Support-Tool-Kit/releases/download/v1.0.3/Assess-1.0.3.ps1",
     "sha256": "00f15e972eb1122f1e4f29baa5492a6ce4c0e53e7b2eb33ac592987351bc4771"
   }
 }
