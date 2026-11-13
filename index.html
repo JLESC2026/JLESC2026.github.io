@@ -65,7 +65,7 @@
 
   <div class="card">
     <h3>PC assessment (read-only report)</h3>
-    <p>Checks hardware, storage health, security, drivers and recent crashes, then saves one HTML report to the Desktop. The report is kept and contains the computer name, user name, serial number and MAC addresses, so share it only with people who support that PC.</p>
+    <p>Checks hardware, storage health, security, drivers and recent crashes, then saves one HTML report where you choose: a folder or USB drive, the Desktop, or show-then-delete. The report contains the computer name, user name, serial number and MAC addresses, so share it only with people who support that PC.</p>
     <div class="cmd"><pre id="c2">[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $r=(iwr -UseBasicParsing https://jlesc2026.github.io/assess).Content; if($r -is [byte[]]){$r=[Text.Encoding]::UTF8.GetString($r)}; iex $r.TrimStart([char]0xFEFF)</pre><button class="copy" type="button" data-target="c2">Copy</button></div>
   </div>
 
@@ -92,8 +92,8 @@
       <td><ul>
         <li>Remove the command you typed from your shell history</li>
         <li>Touch Windows event logs, PowerShell or process-creation logging, antivirus or EDR history, Prefetch or the DNS cache</li>
-        <li>Keep reports made during the session: they are deleted with the folder, so copy them out first</li>
-        <li>Delete the assessment's HTML report, which is saved to the Desktop</li>
+        <li>Keep reports made during the session unless you save them: when you close the toolkit it asks where to copy them first</li>
+        <li>Delete the assessment's HTML report if you chose to keep it (only "show-then-delete" removes it)</li>
       </ul></td>
     </tr></tbody>
   </table>
